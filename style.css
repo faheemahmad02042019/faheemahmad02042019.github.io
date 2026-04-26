@@ -59,12 +59,15 @@ ul { list-style: none; }
 .section-title::after {
     content: '';
     display: block;
-    width: 60px;
+    width: 0;
     height: 3px;
     background: var(--accent);
     border-radius: 2px;
     margin: 16px auto 0;
+    transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
 }
+.section-title.visible::after { width: 60px; }
+.section-title:not([data-aos])::after { width: 60px; }
 .section-subtitle {
     text-align: center;
     color: var(--text-secondary);
@@ -190,10 +193,17 @@ ul { list-style: none; }
     font-weight: 800;
     letter-spacing: -1.5px;
     line-height: 1.1;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 100%);
+    background: linear-gradient(110deg, var(--text-primary) 0%, var(--accent-light) 35%, #ffffff 50%, var(--accent-light) 65%, var(--text-primary) 100%);
+    background-size: 250% 100%;
+    background-position: 100% 0;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: nameShimmer 7s linear infinite;
+}
+@keyframes nameShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -100% 0; }
 }
 .hero-role {
     font-size: 1.35rem;
@@ -244,7 +254,7 @@ ul { list-style: none; }
     border-radius: var(--radius-sm);
     font-size: 0.95rem;
     font-weight: 600;
-    transition: all var(--transition);
+    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition), transform 0.18s ease-out;
     cursor: pointer;
     border: none;
 }
@@ -408,6 +418,24 @@ ul { list-style: none; }
 .timeline-item:first-child .timeline-marker {
     background: var(--accent);
     box-shadow: 0 0 12px var(--accent-glow);
+}
+.timeline-item:first-child .timeline-marker::before,
+.timeline-item:first-child .timeline-marker::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: pulseRing 2.4s ease-out infinite;
+    pointer-events: none;
+}
+.timeline-item:first-child .timeline-marker::after {
+    animation-delay: 1.2s;
+}
+@keyframes pulseRing {
+    0%   { transform: scale(1);   opacity: 0.9; }
+    80%  { opacity: 0; }
+    100% { transform: scale(2.6); opacity: 0; }
 }
 .timeline-content {
     background: var(--bg-card);
@@ -623,7 +651,13 @@ ul { list-style: none; }
     font-size: 0.82rem;
     font-weight: 500;
     border: 1px solid var(--border);
-    transition: all var(--transition);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), background var(--transition), color var(--transition), border-color var(--transition);
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+}
+.skill-pill.pill-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 .skill-pill:hover {
     border-color: var(--accent);
@@ -728,6 +762,65 @@ ul { list-style: none; }
 [data-aos].visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Hero floating orbs */
+.hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+.hero-orb-1 {
+    width: 460px; height: 460px;
+    background: radial-gradient(circle, rgba(59,130,246,0.35) 0%, transparent 70%);
+    top: 10%; left: -120px;
+    animation: orbFloat1 18s ease-in-out infinite;
+}
+.hero-orb-2 {
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(139,92,246,0.28) 0%, transparent 70%);
+    top: 45%; right: -100px;
+    animation: orbFloat2 22s ease-in-out infinite;
+}
+.hero-orb-3 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(16,185,129,0.22) 0%, transparent 70%);
+    bottom: 5%; left: 35%;
+    animation: orbFloat3 26s ease-in-out infinite;
+}
+@keyframes orbFloat1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(80px, -50px) scale(1.12); }
+}
+@keyframes orbFloat2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-70px, 60px) scale(0.92); }
+}
+@keyframes orbFloat3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(40px, -70px) scale(1.08); }
+}
+
+/* 3D tilt prep */
+.project-card,
+.focus-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .skill-pill { opacity: 1 !important; transform: none !important; }
+    .section-title::after { width: 60px !important; }
+    .hero-name { animation: none !important; background-position: 100% 0 !important; }
+    .hero-orb { display: none !important; }
 }
 
 /* ============================================================
